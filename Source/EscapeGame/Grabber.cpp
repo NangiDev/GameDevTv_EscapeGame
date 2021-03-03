@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "DrawDebugHelpers.h"
 #include "Grabber.h"
+#include "DrawDebugHelpers.h"
 #include "GameFramework/PlayerController.h"
 #include "Engine/World.h"
 
@@ -23,7 +23,15 @@ void UGrabber::BeginPlay()
 	Super::BeginPlay();
 	UE_LOG(LogTemp, Warning, TEXT("Grabber reporting for duty"));
 
-	// ...
+	PhysicsHandle = GetOwner()->FindComponentByClass<UPhysicsHandleComponent>();
+
+	if (PhysicsHandle)
+	{
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Missing component, PhysicsHandle, on actor %s"), *GetOwner()->GetName());
+	}
 }
 
 // Called every frame
@@ -40,15 +48,15 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 
 	FVector LineTraceEnd = PlayerViewPointLocation + PlayerViewPointRotation.Vector() * Reach;
 
-	DrawDebugLine(
-		GetWorld(),
-		PlayerViewPointLocation,
-		LineTraceEnd,
-		FColor(0, 255, 0),
-		false,
-		0.f,
-		0,
-		5.f);
+	// DrawDebugLine(
+	// 	GetWorld(),
+	// 	PlayerViewPointLocation,
+	// 	LineTraceEnd,
+	// 	FColor(0, 255, 0),
+	// 	false,
+	// 	0.f,
+	// 	0,
+	// 	5.f);
 
 	FHitResult Hit;
 	FCollisionQueryParams TraceParams(FName(TEXT("")), false, GetOwner());
@@ -58,13 +66,12 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 		PlayerViewPointLocation,
 		LineTraceEnd,
 		FCollisionObjectQueryParams(ECollisionChannel::ECC_PhysicsBody),
-		TraceParams
-	);
+		TraceParams);
 
 	AActor *ActorHit = Hit.GetActor();
 
 	if (ActorHit)
 	{
-		UE_LOG(LogTemp, Error, TEXT("Linie trace has hit: %s"), *(ActorHit->GetName()));
+		UE_LOG(LogTemp, Error, TEXT("Line trace has hit: %s"), *(ActorHit->GetName()));
 	}
 }
