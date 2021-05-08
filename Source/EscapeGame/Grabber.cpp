@@ -38,11 +38,7 @@ void UGrabber::BindInputComponent()
 void UGrabber::FindPhysicsHandle()
 {
 	PhysicsHandle = GetOwner()->FindComponentByClass<UPhysicsHandleComponent>();
-	if (PhysicsHandle)
-	{
-		// Physics is found
-	}
-	else
+	if (PhysicsHandle == nullptr)
 	{
 		UE_LOG(LogTemp, Error, TEXT("Missing component, PhysicsHandle, on actor %s"), *GetOwner()->GetName());
 	}
@@ -59,9 +55,8 @@ void UGrabber::Grab()
 		PhysicsHandle->GrabComponentAtLocationWithRotation(
 			ComponentToGrab,
 			NAME_None,
-			GetLineTraceEnd(),
-			FRotator().ZeroRotator
-			);
+			GetPlayersReach(),
+			FRotator().ZeroRotator);
 	}
 }
 
@@ -78,13 +73,13 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 
 	if (PhysicsHandle->GrabbedComponent)
 	{
-		PhysicsHandle->SetTargetLocation(GetLineTraceEnd());
+		PhysicsHandle->SetTargetLocation(GetPlayersReach());
 	}
 
 	DrawDebugLine(
 		GetWorld(),
 		GetOwner()->GetActorLocation(),
-		GetLineTraceEnd(),
+		GetPlayersReach(),
 		FColor(0, 255, 0),
 		false,
 		0.f,
@@ -92,7 +87,7 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 		5.f);
 }
 
-FVector UGrabber::GetLineTraceEnd()
+FVector UGrabber::GetPlayersReach()
 {
 	FVector PlayerDirection = GetOwner()->GetActorLocation() - PreviousLocation;
 	PlayerDirection.Normalize();
@@ -106,12 +101,12 @@ FVector UGrabber::GetLineTraceEnd()
 FHitResult UGrabber::GetFirstPhysicsBodyWithinReach()
 {
 	FHitResult Hit;
-	FCollisionQueryParams TraceParams(FName(TEXT("")), false, GetOwner());
+	FCollisionQueryParams TraceParams(NAME_None, false, GetOwner());
 
 	GetWorld()->LineTraceSingleByObjectType(
 		OUT Hit,
 		GetOwner()->GetActorLocation(),
-		GetLineTraceEnd(),
+		GetPlayersReach(),
 		FCollisionObjectQueryParams(ECollisionChannel::ECC_PhysicsBody),
 		TraceParams);
 

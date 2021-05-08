@@ -36,5 +36,5 @@ private:
 	void FindPhysicsHandle();
 	void BindInputComponent();
 	FHitResult GetFirstPhysicsBodyWithinReach();
-	FVector GetLineTraceEnd();
+	FVector GetPlayersReach();
 };

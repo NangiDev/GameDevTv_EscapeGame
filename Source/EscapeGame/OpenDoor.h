@@ -15,16 +15,15 @@ class ESCAPEGAME_API UOpenDoor : public UActorComponent
 public:
 	// Sets default values for this component's properties
 	UOpenDoor();
-
-protected:
-	// Called when the game starts
-	virtual void BeginPlay() override;
-
-public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
 	void OpenDoor(float DeltaTime);
 	void CloseDoor(float DeltaTime);
+	float TotalMassOfActors() const;
+
+protected:
+	// Called when the game starts
+	virtual void BeginPlay() override;
 
 private:
 	float InitialYaw;
@@ -32,6 +31,9 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	float OpenAngle = 90.f;
+
+	UPROPERTY(EditAnywhere)
+	float MassToOpenDoors = 50.0f;
 
 	UPROPERTY(EditAnywhere)
 	ATriggerVolume *PressurePlate;
