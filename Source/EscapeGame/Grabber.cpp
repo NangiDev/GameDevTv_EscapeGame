@@ -51,19 +51,35 @@ void UGrabber::FindPhysicsHandle()
 void UGrabber::Grab()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Grabber pressed"));
+	FHitResult HitResult = GetFirstPhysicsBodyWithinReach();
+	UPrimitiveComponent *ComponentToGrab = HitResult.GetComponent();
 
-	GetFirstPhysicsBodyWithinReach();
+	if (HitResult.GetActor())
+	{
+		PhysicsHandle->GrabComponentAtLocationWithRotation(
+			ComponentToGrab,
+			NAME_None,
+			GetLineTraceEnd(),
+			FRotator().ZeroRotator
+			);
+	}
 }
 
 void UGrabber::Release()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Grabber released"));
+	PhysicsHandle->ReleaseComponent();
 }
 
 // Called every frame
 void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	if (PhysicsHandle->GrabbedComponent)
+	{
+		PhysicsHandle->SetTargetLocation(GetLineTraceEnd());
+	}
 
 	DrawDebugLine(
 		GetWorld(),
