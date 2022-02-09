@@ -28,7 +28,9 @@ private:
 
 	FVector PreviousLocation = FVector(0.f, 0.f, 0.f);
 
+	UPROPERTY()
 	UPhysicsHandleComponent *PhysicsHandle = nullptr;
+	UPROPERTY()
 	UInputComponent *InputComponent = nullptr;
 
 	void Grab();

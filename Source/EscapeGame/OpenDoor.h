@@ -20,6 +20,10 @@ public:
 	void OpenDoor(float DeltaTime);
 	void CloseDoor(float DeltaTime);
 	float TotalMassOfActors() const;
+	void FindAudioComponent();
+
+	bool OpenDoorSound = false;
+	bool CloseDoorSound = true;
 
 protected:
 	// Called when the game starts
@@ -36,13 +40,16 @@ private:
 	float MassToOpenDoors = 50.0f;
 
 	UPROPERTY(EditAnywhere)
-	ATriggerVolume *PressurePlate;
+	ATriggerVolume *PressurePlate = nullptr;
 
 	UPROPERTY(EditAnywhere)
-	AActor *ActorThatOpens;
+	AActor *ActorThatOpens = nullptr;
 
 	float DoorLastOpened;
 
 	UPROPERTY(EditAnywhere)
 	float DoorCloseDelay = .5f;
+
+	UPROPERTY()
+	UAudioComponent* AudioComponent = nullptr;
 };

@@ -38,7 +38,7 @@ void UGrabber::BindInputComponent()
 void UGrabber::FindPhysicsHandle()
 {
 	PhysicsHandle = GetOwner()->FindComponentByClass<UPhysicsHandleComponent>();
-	if (PhysicsHandle == nullptr)
+	if (ensure(PhysicsHandle))
 	{
 		UE_LOG(LogTemp, Error, TEXT("Missing component, PhysicsHandle, on actor %s"), *GetOwner()->GetName());
 	}
@@ -50,7 +50,7 @@ void UGrabber::Grab()
 	FHitResult HitResult = GetFirstPhysicsBodyWithinReach();
 	UPrimitiveComponent *ComponentToGrab = HitResult.GetComponent();
 
-	if (HitResult.GetActor())
+	if (HitResult.GetActor() &&ensure(PhysicsHandle))
 	{
 		PhysicsHandle->GrabComponentAtLocationWithRotation(
 			ComponentToGrab,
@@ -62,6 +62,7 @@ void UGrabber::Grab()
 
 void UGrabber::Release()
 {
+	if (!PhysicsHandle) { return; }
 	UE_LOG(LogTemp, Warning, TEXT("Grabber released"));
 	PhysicsHandle->ReleaseComponent();
 }
@@ -71,6 +72,7 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+	if (!PhysicsHandle) { return; }
 	if (PhysicsHandle->GrabbedComponent)
 	{
 		PhysicsHandle->SetTargetLocation(GetPlayersReach());
